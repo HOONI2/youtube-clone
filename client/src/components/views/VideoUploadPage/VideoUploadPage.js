@@ -52,7 +52,7 @@ function VideoUploadPage() {
         console.log(response.data);
 
         let variable = {
-          url: response.data.url,
+          url: response.data.filePath,
           fileName: response.data.fileName,
         };
 

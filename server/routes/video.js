@@ -51,8 +51,6 @@ router.post("/thumbnail", (req, res) => {
   let filePath = "";
   let fileDuration = "";
 
-  ffmpeg.setFfmpegPath("C:\\dev\\ffmpeg\\bin");
-
   // 비디오 정보 가져오기
   ffmpeg.ffprobe(req.body.url, function (err, metadata) {
     console.log(metadata);
@@ -66,7 +64,7 @@ router.post("/thumbnail", (req, res) => {
       console.log("Will generate " + filenames.join(", "));
       console.log(filenames);
 
-      filepath = "uploads/thumbnails/" + fielnames[0];
+      filepath = "uploads/thumbnails/" + filenames[0];
     })
     .on("end", function () {
       console.log("Screentshots taken");
