@@ -61,7 +61,7 @@ function VideoUploadPage(props) {
           fileName: response.data.fileName,
         };
 
-        setFilePath(response.data.url);
+        setFilePath(response.data.filePath);
 
         Axios.post("/api/video/thumbnail", variable).then((response) => {
           if (response.data.success) {
@@ -92,7 +92,7 @@ function VideoUploadPage(props) {
     };
     Axios.post("/api/video/uploadVideo", variable).then((response) => {
       if (response.data.success) {
-        //console.log(response.data);
+        console.log("DB에 업로드" + response.data);
         message.success("성공적으로 업로드를 했습니다");
         setTimeout(() => {
           props.history.push("/");
