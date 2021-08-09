@@ -1,68 +1,66 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-function Subscriber(props) {
-  const userTo = props.userTo;
-  const userFrom = props.userFrom;
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
 
+function Subscribe(props) {
   const [SubscribeNumber, setSubscribeNumber] = useState(0);
   const [Subscribed, setSubscribed] = useState(false);
+  useEffect(() => {
+    let variable = { userTo: props.userTo };
+    Axios.post("/api/subscribe/subscribeNumber", variable).then((response) => {
+      if (response.data.success) {
+        setSubscribeNumber(response.data.subscribeNumber);
+      } else {
+        alert("구독자 수 정보를 받아오지 못했습니다");
+      }
+    });
 
-  const onSubscribe = () => {
-    let subscribeVariables = {
-      userTo: userTo,
-      userFrom: userFrom,
+    let subscribevariable = {
+      userTo: props.userTo,
+      userFrom: localStorage.getItem("userId"),
     };
 
+    Axios.post("/api/subscribe/subscribed", subscribevariable).then(
+      (response) => {
+        if (response.data.success) {
+          setSubscribed(response.data.subscribed);
+        } else {
+          alert("정보를 받아오지 못했습니다");
+        }
+      }
+    );
+  }, []);
+
+  const onSubscribe = () => {
+    let subscribeVariable = {
+      useTo: props.userTo,
+      userFrom: props.userFrom,
+    };
+
+    // 이미 구독중이라면
     if (Subscribed) {
-      //when we are already subscribed
-      axios
-        .post("/api/subscribe/unSubscribe", subscribeVariables)
-        .then((response) => {
+      Axios.post("/api/subscribe/unSubscribe", subscribeVariable).then(
+        (response) => {
           if (response.data.success) {
             setSubscribeNumber(SubscribeNumber - 1);
             setSubscribed(!Subscribed);
           } else {
-            alert("Failed to unsubscribe");
+            alert("구독 취소 하는데 실패 했습니다");
           }
-        });
+        }
+      );
     } else {
-      // when we are not subscribed yet
-
-      axios
-        .post("/api/subscribe/subscribe", subscribeVariables)
-        .then((response) => {
+      Axios.post("/api/subscribe/subscribe", subscribeVariable).then(
+        (response) => {
           if (response.data.success) {
             setSubscribeNumber(SubscribeNumber + 1);
             setSubscribed(!Subscribed);
           } else {
-            alert("Failed to subscribe");
+            alert("구독 하는데 실패 했습니다");
           }
-        });
+        }
+      );
     }
   };
-
-  useEffect(() => {
-    const subscribeNumberVariables = { userTo: userTo, userFrom: userFrom };
-    axios
-      .post("/api/subscribe/subscribeNumber", subscribeNumberVariables)
-      .then((response) => {
-        if (response.data.success) {
-          setSubscribeNumber(response.data.subscribeNumber);
-        } else {
-          alert("Failed to get subscriber Number");
-        }
-      });
-
-    axios
-      .post("/api/subscribe/subscribed", subscribeNumberVariables)
-      .then((response) => {
-        if (response.data.success) {
-          setSubscribed(response.data.subcribed);
-        } else {
-          alert("Failed to get Subscribed Information");
-        }
-      });
-  }, []);
 
   return (
     <div>
@@ -76,7 +74,7 @@ function Subscriber(props) {
           fontSize: "1rem",
           textTransform: "uppercase",
         }}
-        onClick
+        onClick={onSubscribe}
       >
         {SubscribeNumber} {Subscribed ? "Subscribed" : "Subscribe"}
       </button>
@@ -84,4 +82,4 @@ function Subscriber(props) {
   );
 }
 
-export default Subscriber;
+export default Subscribe;
